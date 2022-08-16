@@ -1,0 +1,174 @@
+---
+title: "Restauração Biocultural da Caatinga"
+subtitle: "SOBRE 2021 - Virtual"
+author: "Felipe Melo"
+institute: "Laboratório de Ecologia Aplicada - UFPE"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["robot","tamu-fonts"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      beforeInit: "macros.js"
+      
+---
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+xaringanExtra::use_scribble()
+xaringanExtra::use_fit_screen()
+```
+.right[
+# As pessoas da Caatinga]
+
+<img src="libs/pessoas.png">
+
+
+---
+.right[
+# A restauração dialoga com o modo de vida sertanejo?]
+
+--
+##- Reconhecer quem se beneficia?
+
+--
+##- Promove a valoração da Caatinga para o Caatingueiro?
+
+--
+##- Contempla demandas locais?
+
+---
+.right[
+# O cenário típico da Caatinga]
+
+<img src="https://abori.com.br/wp-content/uploads/2020/07/F01_Landscape_Martins_RN_Brazil_CRFonseca-scaled-1-1499x844.jpg" width= 900>
+
+---
+.right[
+# Disturbio crônico]
+.pull-left[
+<img src="libs/chronic.png" width= 900>
+]
+
+.pull-right[
+
+### - Associado à presença humana
+### - Provocado por atividades típicas da região
+]
+
+### fonte: [Antongiovanni et al (2020)](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13686)
+
+---
+.right[
+# Bodes e Caatinga]
+.pull-left[
+<img src="libs/bodes.png" width= 900>
+]
+
+.pull-right[
+### - Áreas de uso de 100ha
+### - Hábito generalista
+### - Reduzem biomassa de herbáceas
+### - Preferência por hábitats abertos
+### fontes: [Jamelli et al 2021](https://www.sciencedirect.com/science/article/abs/pii/S0140196321000987) e [Menezes et al 2020](https://onlinelibrary.wiley.com/doi/epdf/10.1002/ldr.3693)
+]
+
+---
+.left-column[
+# Segurança hídrica e Caatinga
+### - Acesso à água
+### - Problema multidimensional
+### - Variáveis socioeconômicas
+### fonte: Alencar et al in press)
+]
+
+.right-column[
+<img src="libs/water.jpg" width= 900>
+]
+
+---
+.left-column[
+# Segurança energética e Caatinga
+### - Importante fonte de energia
+### - Associada à vegetação
+### - Muito por entender ainda...
+#### fonte: Alencar et al (in press)
+]
+
+.right-column[
+<img src="libs/energy.png" width= 900>
+]
+
+---
+.right[
+# Segruança alimentar e Caatinga]
+.pull-left[
+<img src="libs/drought.png" width= 900>
+]
+
+.pull-right[
+### - Pecuária é chave
+### - Caatinga + Bode?
+<img src="libs/correlog.png" width= 900>
+
+Fonte: Alencar et al (in press)
+]
+
+---
+.pull-left[
+<img src="libs/biocult.png" width= 720>
+]
+
+.pull-right[
+# Restauração biocultural
+### - Conhecimento tradicional é chave para a restauração
+### - Aumenta a compromisso das pessoas
+### - Reproduz características originais do sistema
+### fonte: Sena et al 2021 ("in press")
+
+]
+
+
+---
+
+.right[
+# Novos desafios para a valorização da Caatinga
+]
+
+
+<img src="libs/wef.png" width= 920>
+
+fonte: [Melo et al 2021](https://www.nature.com/articles/s41893-020-00608-z)
+
+---
+class: center, middle
+
+<img src=libs/vote.png width = 600>
+
+---
+.pull-left[
+# Agradecimentos:
+
+### - Dra. Adriana Pelegrinni
+### - Dra. Gislene Ganade
+### - Dra. Cristina Baldauf
+### - Dr. Luke Parry
+### - Dr. José Maria Cardoso da Silva
+### - Dr. Severino R.R. Pinto
+]
+.pull-right[
+
+<img src=libs/unis.png>
+
+<img src=libs/cnpq.png>
+]
+---
+class: center, middle
+
+# Obrigado
+## [ecoaplic.org](www.ecoaplic.org)
+
+

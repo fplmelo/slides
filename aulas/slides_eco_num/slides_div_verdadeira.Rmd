@@ -1,0 +1,236 @@
+---
+title: "Ecologia Numérica"
+subtitle: "Aula 4 - Medidas de diversidade verdadeira"
+author: "Felipe Melo"
+institute: "Laboratório de Ecologia Aplicada - UFPE"
+date: "`r Sys.Date()`"
+encoding: "UTF-8"
+output: 
+  xaringan::moon_reader:
+    libs_dir: libs
+    css: ["robot","tamu-fonts"]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      
+---
+# Diversidade Taxonômica 
+.center[
+<img src=libs/div.png width = 700>
+]
+
+---
+# Precisamos saber:
+
+--
+## Qual o problema dos índices de "diversidade" mais famosos?
+
+--
+## O que é número efetivo de espécies?
+
+--
+## Como calcular diversidade verdadeira
+
+---
+# O problema dos "índices de diversidade"
+.panelset[.panel[.panel-name[Área de um Círculo]
+```{r message=FALSE}
+xaringanExtra::use_panelset()
+xaringanExtra::use_scribble()
+library(tidyverse)
+ex1<-tibble(
+  raio=seq(1:10),
+  area=raio*raio*3.1416
+)
+ex1
+```
+]
+
+.panel[.panel-name[Gráfico]
+```{r out.width="30%"}
+ggplot(ex1, aes(raio, area))+geom_point()+geom_line()+theme_bw()
+```
+]
+.panel[.panel-name[Conclusão]
+
+.center[#O raio **indica** a área do círculo, mas não É o circulo]
+]
+]
+
+---
+class: middle, center
+<img src=https://www.davidzeleny.net/anadat-r/lib/exe/fetch.php/obrazky:bubbles-sad-3in1.png>
+---
+# Uma definião intuitiva
+.center[
+<img src=libs/tree_2.png width = 900>]
+
+---
+# Vamos ver na prática
+.left-column[
+## Riqueza de espécies
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+```{r, echo=TRUE}
+community1=data.frame(t(rep(1,100))); colnames(community1)=paste("sp",1:100)
+community2=data.frame(t(c(rep(1,50)))); colnames(community2)=paste("sp",1:50)
+library(vegan)
+
+S1=specnumber(community1); S1
+S2=specnumber(community2); S2
+S2==0.5*S1
+```
+
+]
+---
+.left-column[
+# Diversidade de espécies (Shannon)
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+```{r, echo=TRUE}
+H1=diversity(community1,index="shannon"); H1
+H2=diversity(community2,index="shannon"); H2
+
+H1==log(S1)
+
+H2==0.5*H1
+
+```
+
+]
+---
+.left-column[
+# Projeção da Diversidade de Shannon
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+```{r, echo=TRUE}
+shannon=matrix(ncol=2,nrow=100)
+for(i in 1:100) {
+  community=data.frame(t(rep(1,i))); colnames(community)=paste("sp",1:i)
+  shannon[i,1]=i
+  shannon[i,2]=diversity(community,index="shannon") }
+
+plot(shannon[,1],shannon[,2],xlab="Species Richness",ylab="Shannon Diversity",
+main="Shannon")
+
+```
+]
+
+---
+.left-column[
+# Números de Hill (Diversidade Verdadeira)
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+```{r, echo=TRUE, out.width = '50%'}
+HE1=exp(diversity(community1,index="shannon")); HE1 
+HE2=exp(diversity(community2,index="shannon")); HE2 
+as.character(HE2)==as.character(0.5*HE1)
+
+```
+]
+
+---
+.left-column[
+# Projeção da Diversidade Verdadeira
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+```{r, echo=TRUE, out.width = '50%'}
+shannon_effective=matrix(ncol=2,nrow=100)
+for(i in 1:100) {
+  community=data.frame(t(rep(1,i))); colnames(community)=paste("sp",1:i)
+  shannon_effective[i,1]=i
+  shannon_effective[i,2]=exp(diversity(community,index="shannon")) }
+plot(shannon_effective[,1],shannon_effective[,2],xlab="Species Richness",
+ylab="Effective Numbers of Species",main="Shannon (Effective)")
+
+```
+]
+
+---
+# Uma definião intuitiva
+.pull-left[
+<img src=libs/peixe.png width = 700>
+
+<br>
+
+<img src=libs/peixe2.png width = 700>
+]
+
+---
+class: middle, center
+
+<img src=https://jslefche.files.wordpress.com/2012/10/entropy.png width = 500>
+
+# Equaçao geral da entropia
+# O 'q' da questão
+
+---
+.left-column[
+# A ordem 'q' de diversidade
+## q=0 ~ Riqueza
+## q=1 ~ Shannon
+## q=2 ~ Simpson
+]
+.right-column[
+```{r, echo = FALSE}
+set.seed(9)
+divprof=function(community) {
+  cbind(
+    seq(0,5,by=0.11),
+    unlist(lapply(seq(0,5,by=0.11),function(q) sum(apply(community,1,function(x) 
+       (x/sum(x))^q))^(1/(1-q))))) }
+community3=data.frame(t(sample(1:1000,500))); colnames(community3)=paste("sp",1:500)
+# Apply function `divprof` to this community
+community3.divprof=divprof(community3)
+plot(community3.divprof[,1],community3.divprof[,2],pch=16,cex=2,xlab="q value",
+ylab="Diversity")
+# Where q=0, diversity is species richness
+text(0.6,501,labels=c("Richness"))
+points(community3.divprof[1,1],community3.divprof[1,2],col="red",pch=16,cex=2)
+# Where q=1, diversity is Shannon diversity
+exp(diversity(community3,index="shannon"))
+text(2,exp(diversity(community3,index="shannon"))+5,labels=c("Shannon Diversity"))
+points(community3.divprof[10,1],community3.divprof[10,2],col="red",pch=16,cex=2)
+# Where q=2, diversity is Simpson diversity
+1/(1-diversity(community3,index="simpson"))
+text(2.9,1/(1-diversity(community3,index="simpson"))-1,
+labels=c("Simpson Diversity"))
+points(community3.divprof[20,1],community3.divprof[20,2],col="red",pch=16,cex=2)
+```
+
+]
+
+---
+# Número efetivos de espécies
+<img src=libs/qorder.png width = 800>
+
+---
+class: middle, center
+# Propriedades do Número efetivos de espécies
+
+## - Duplicável
+## - Projeção linear
+
+---
+class: middle, center
+#Vamos praticar
+
+
+---

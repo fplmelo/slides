@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Ecologia Numérica</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Felipe Melo" />
+    <meta name="date" content="2022-02-22" />
+    <script src="slides_div_verdadeira_files/header-attrs-2.11/header-attrs.js"></script>
+    <link href="slides_div_verdadeira_files/remark-css-0.0.1/robot.css" rel="stylesheet" />
+    <link href="slides_div_verdadeira_files/remark-css-0.0.1/tamu-fonts.css" rel="stylesheet" />
+    <link href="slides_div_verdadeira_files/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="slides_div_verdadeira_files/panelset-0.2.6/panelset.js"></script>
+    <script src="slides_div_verdadeira_files/fabric-4.3.1/fabric.min.js"></script>
+    <link href="slides_div_verdadeira_files/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="slides_div_verdadeira_files/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Ecologia Numérica
+## Aula 4 - Medidas de diversidade verdadeira
+### Felipe Melo
+### Laboratório de Ecologia Aplicada - UFPE
+### 2022-02-22
+
+---
+
+# Diversidade Taxonômica 
+.center[
+&lt;img src=libs/div.png width = 700&gt;
+]
+
+---
+# Precisamos saber:
+
+--
+## Qual o problema dos índices de "diversidade" mais famosos?
+
+--
+## O que é número efetivo de espécies?
+
+--
+## Como calcular diversidade verdadeira
+
+---
+# O problema dos "índices de diversidade"
+.panelset[.panel[.panel-name[Área de um Círculo]
+
+```r
+xaringanExtra::use_panelset()
+```
+
+```r
+xaringanExtra::use_scribble()
+```
+
+```r
+library(tidyverse)
+ex1&lt;-tibble(
+  raio=seq(1:10),
+  area=raio*raio*3.1416
+)
+ex1
+```
+
+```
+## # A tibble: 10 × 2
+##     raio   area
+##    &lt;int&gt;  &lt;dbl&gt;
+##  1     1   3.14
+##  2     2  12.6 
+##  3     3  28.3 
+##  4     4  50.3 
+##  5     5  78.5 
+##  6     6 113.  
+##  7     7 154.  
+##  8     8 201.  
+##  9     9 254.  
+## 10    10 314.
+```
+]
+
+.panel[.panel-name[Gráfico]
+
+```r
+ggplot(ex1, aes(raio, area))+geom_point()+geom_line()+theme_bw()
+```
+
+&lt;img src="slides_div_verdadeira_files/figure-html/unnamed-chunk-2-1.png" width="30%" /&gt;
+]
+.panel[.panel-name[Conclusão]
+
+.center[#O raio **indica** a área do círculo, mas não É o circulo]
+]
+]
+
+---
+class: middle, center
+&lt;img src=https://www.davidzeleny.net/anadat-r/lib/exe/fetch.php/obrazky:bubbles-sad-3in1.png&gt;
+---
+# Uma definião intuitiva
+.center[
+&lt;img src=libs/tree_2.png width = 900&gt;]
+
+---
+# Vamos ver na prática
+.left-column[
+## Riqueza de espécies
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+
+```r
+community1=data.frame(t(rep(1,100))); colnames(community1)=paste("sp",1:100)
+community2=data.frame(t(c(rep(1,50)))); colnames(community2)=paste("sp",1:50)
+library(vegan)
+```
+
+```
+## Carregando pacotes exigidos: permute
+```
+
+```
+## Carregando pacotes exigidos: lattice
+```
+
+```
+## This is vegan 2.5-7
+```
+
+```r
+S1=specnumber(community1); S1
+```
+
+```
+## [1] 100
+```
+
+```r
+S2=specnumber(community2); S2
+```
+
+```
+## [1] 50
+```
+
+```r
+S2==0.5*S1
+```
+
+```
+## [1] TRUE
+```
+
+]
+---
+.left-column[
+# Diversidade de espécies (Shannon)
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+
+```r
+H1=diversity(community1,index="shannon"); H1
+```
+
+```
+## [1] 4.60517
+```
+
+```r
+H2=diversity(community2,index="shannon"); H2
+```
+
+```
+## [1] 3.912023
+```
+
+```r
+H1==log(S1)
+```
+
+```
+## [1] FALSE
+```
+
+```r
+H2==0.5*H1
+```
+
+```
+## [1] FALSE
+```
+
+]
+---
+.left-column[
+# Projeção da Diversidade de Shannon
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+
+```r
+shannon=matrix(ncol=2,nrow=100)
+for(i in 1:100) {
+  community=data.frame(t(rep(1,i))); colnames(community)=paste("sp",1:i)
+  shannon[i,1]=i
+  shannon[i,2]=diversity(community,index="shannon") }
+
+plot(shannon[,1],shannon[,2],xlab="Species Richness",ylab="Shannon Diversity",
+main="Shannon")
+```
+
+&lt;img src="slides_div_verdadeira_files/figure-html/unnamed-chunk-5-1.png" width="50%" /&gt;
+]
+
+---
+.left-column[
+# Números de Hill (Diversidade Verdadeira)
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+
+```r
+HE1=exp(diversity(community1,index="shannon")); HE1 
+```
+
+```
+## [1] 100
+```
+
+```r
+HE2=exp(diversity(community2,index="shannon")); HE2 
+```
+
+```
+## [1] 50
+```
+
+```r
+as.character(HE2)==as.character(0.5*HE1)
+```
+
+```
+## [1] TRUE
+```
+]
+
+---
+.left-column[
+# Projeção da Diversidade Verdadeira
+## Duas comundiades
+## Abundâncias iguais
+]
+
+.right-column[
+
+```r
+shannon_effective=matrix(ncol=2,nrow=100)
+for(i in 1:100) {
+  community=data.frame(t(rep(1,i))); colnames(community)=paste("sp",1:i)
+  shannon_effective[i,1]=i
+  shannon_effective[i,2]=exp(diversity(community,index="shannon")) }
+plot(shannon_effective[,1],shannon_effective[,2],xlab="Species Richness",
+ylab="Effective Numbers of Species",main="Shannon (Effective)")
+```
+
+&lt;img src="slides_div_verdadeira_files/figure-html/unnamed-chunk-7-1.png" width="50%" /&gt;
+]
+
+---
+# Uma definião intuitiva
+.pull-left[
+&lt;img src=libs/peixe.png width = 700&gt;
+
+&lt;br&gt;
+
+&lt;img src=libs/peixe2.png width = 700&gt;
+]
+
+---
+class: middle, center
+
+&lt;img src=https://jslefche.files.wordpress.com/2012/10/entropy.png width = 500&gt;
+
+# Equaçao geral da entropia
+# O 'q' da questão
+
+---
+.left-column[
+# A ordem 'q' de diversidade
+## q=0 ~ Riqueza
+## q=1 ~ Shannon
+## q=2 ~ Simpson
+]
+.right-column[
+
+```
+## [1] 409.9724
+```
+
+```
+## [1] 371.7191
+```
+
+![](slides_div_verdadeira_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+]
+
+---
+# Número efetivos de espécies
+&lt;img src=libs/qorder.png width = 800&gt;
+
+---
+class: middle, center
+# Propriedades do Número efetivos de espécies
+
+## - Duplicável
+## - Projeção linear
+
+---
+class: middle, center
+#Vamos praticar
+
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
